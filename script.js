@@ -131,11 +131,41 @@ document.getElementById('calculateMeals').addEventListener('click', function() {
         const fourthMeal = 0.1 * finalCalories;
         const fifthMeal = 0.2 * finalCalories;
         mealDistribution = `<strong>Posiłek 1:</strong> 25% - <strong>${firstMeal.toFixed(2)} kcal</strong><br>
-                            <strong>Śniadanie:</strong> 10% - <strong>${secondMeal.toFixed(2)} kcal</strong><br>
-                            <strong>II Śniadanie:</strong> 35% - <strong>${thirdMeal.toFixed(2)} kcal</strong><br>
-                            <strong>Obiad:</strong> 10% - <strong>${fourthMeal.toFixed(2)} kcal</strong><br>
-                            <strong>Kolacja:</strong> 20% - <strong>${fifthMeal.toFixed(2)} kcal</strong>`;
+                            <strong>Posiłek 2:</strong> 10% - <strong>${secondMeal.toFixed(2)} kcal</strong><br>
+                            <strong>Posiłek 3:</strong> 35% - <strong>${thirdMeal.toFixed(2)} kcal</strong><br>
+                            <strong>Posiłek 4:</strong> 10% - <strong>${fourthMeal.toFixed(2)} kcal</strong><br>
+                            <strong>Posiłek 5:</strong> 20% - <strong>${fifthMeal.toFixed(2)} kcal</strong>`;
     }
 
     document.getElementById('mealDistribution').innerHTML = mealDistribution;
+    
+    // Pokaż przycisk "Pobierz dane w formacie Excel"
+    document.getElementById('downloadExcel').style.display = 'block';
+});
+
+document.getElementById('downloadExcel').addEventListener('click', function() {
+    const firstName = document.getElementById('firstName').value;
+    const lastName = document.getElementById('lastName').value;
+    const weight = parseFloat(document.getElementById('weight').value);
+    const height = parseFloat(document.getElementById('height').value);
+    const age = parseFloat(document.getElementById('age').value);
+    const gender = document.getElementById('gender').value;
+    const activity = document.getElementById('activity').options[document.getElementById('activity').selectedIndex].text;
+    const calorieNeeds = document.getElementById('calorieResult').textContent.match(/[\d\.]+/)[0];
+    const bmi = document.getElementById('bmiResult').textContent.match(/[\d\.]+/)[0];
+    const goal = document.getElementById('goal').value;
+    const goalWeight = parseFloat(document.getElementById('goalWeight').value);
+    const goalWeeks = parseFloat(document.getElementById('goalWeeks').value);
+    const meals = parseInt(document.getElementById('meals').value);
+    const mealDistribution = document.getElementById('mealDistribution').innerText;
+
+    const workbook = XLSX.utils.book_new();
+    const ws_data = [
+        ['Imię', 'Nazwisko', 'Waga', 'Wzrost', 'Wiek', 'Płeć', 'Poziom aktywności', 'Dzienne zapotrzebowanie kaloryczne', 'BMI', 'Cel diety', 'Kg do zmiany', 'Tygodnie na zmianę', 'Liczba posiłków', 'Rozkład posiłków'],
+        [firstName, lastName, weight, height, age, gender, activity, calorieNeeds, bmi, goal, goalWeight, goalWeeks, meals, mealDistribution]
+    ];
+    const ws = XLSX.utils.aoa_to_sheet(ws_data);
+    XLSX.utils.book_append_sheet(workbook, ws, 'Dane');
+
+    XLSX.writeFile(workbook, 'dane_dietetyczne.xlsx');
 });
